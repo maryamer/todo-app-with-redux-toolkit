@@ -6,7 +6,7 @@ import { addTodo, toggleTodo, deleteTodo } from "../../features/todo/todoSlice";
 export default function TodoItem({ id, title, completed }) {
   const dispatch = useDispatch();
   return (
-    <li className={`list-group-item ${completed && "bg-info"}`}>
+    <li key={id} className={`list-group-item ${completed && "bg-info"}`}>
       <div className="d-flex justify-content-center gap-1">
         <input
           type="checkbox"
