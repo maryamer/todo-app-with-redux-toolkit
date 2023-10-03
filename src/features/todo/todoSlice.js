@@ -21,13 +21,26 @@ export const getAsyncTodos = createAsyncThunk(
 export const addAsyncTodo = createAsyncThunk(
   "todos/addAsyncTodo",
   async (payload, { rejectWithValue }) => {
+    console.log(payload);
     try {
-      const response = await api.post("/todos", {
+      const response = await api.post(`/todos`, {
         title: payload.title,
         id: Date.now(),
         completed: false,
       });
+
       return response.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+export const deleteAsyncTodo = createAsyncThunk(
+  "todos/deleteAsyncTodo",
+  async (payload, { rejectWithValue }) => {
+    try {
+      await api.delete(`/todos/${payload.id}`);
+      return { id: payload.id };
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -51,7 +64,6 @@ const todoSlice = createSlice({
         completed: false,
       };
       state.todos.push(newTodo);
-      console.log(state.todos);
     },
     toggleTodo: (state, action) => {
       const todo = state.todos.find((item) => item.id == action.payload.id);
@@ -85,9 +97,14 @@ const todoSlice = createSlice({
       state.todos.push(action.payload);
       state.error = "";
     },
-    [addAsyncTodo.rejected]: (state, action) => {
+
+    // [deleteAsyncTodo.pending]: (state, action) => {
+    //   state.loading = true;
+    // },
+    [deleteAsyncTodo.fulfilled]: (state, action) => {
       state.loading = false;
-      state.error = action.payload;
+      state.todos = state.todos.filter((item) => item.id != action.payload.id);
+      state.error = "";
     },
   },
 });
