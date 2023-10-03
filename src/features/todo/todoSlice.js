@@ -46,6 +46,19 @@ export const deleteAsyncTodo = createAsyncThunk(
     }
   }
 );
+export const toggleAsyncTodo = createAsyncThunk(
+  "todos/toggleAsyncTodo",
+  async (payload, { rejectWithValue }) => {
+    try {
+      await api.patch(`/todos/${payload.id}`, {
+        completed: !payload.completed,
+      });
+      return { id: payload.id };
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 const todoSlice = createSlice({
   name: "todos",
   initialState: {
@@ -97,13 +110,15 @@ const todoSlice = createSlice({
       state.todos.push(action.payload);
       state.error = "";
     },
-
-    // [deleteAsyncTodo.pending]: (state, action) => {
-    //   state.loading = true;
-    // },
     [deleteAsyncTodo.fulfilled]: (state, action) => {
       state.loading = false;
       state.todos = state.todos.filter((item) => item.id != action.payload.id);
+      state.error = "";
+    },
+    [toggleAsyncTodo.fulfilled]: (state, action) => {
+      state.loading = false;
+      const todo = state.todos.find((item) => item.id == action.payload.id);
+      todo.completed = !todo.completed;
       state.error = "";
     },
   },

@@ -1,7 +1,11 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-import { toggleTodo, deleteAsyncTodo } from "../../features/todo/todoSlice";
+import {
+  toggleTodo,
+  deleteAsyncTodo,
+  toggleAsyncTodo,
+} from "../../features/todo/todoSlice";
 
 export default function TodoItem({ id, title, completed }) {
   const dispatch = useDispatch();
@@ -10,7 +14,7 @@ export default function TodoItem({ id, title, completed }) {
       <div className="d-flex justify-content-center gap-1">
         <input
           type="checkbox"
-          onChange={() => dispatch(toggleTodo({ id: id }))}
+          onChange={() => dispatch(toggleAsyncTodo({ id, title, completed }))}
           checked={completed}
           className="mr-3"
         />
